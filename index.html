@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hospital Search</title>
+    <style>
+      form {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+      input[type="text"] {
+        padding: 5px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: 300px;
+        margin-right: 10px;
+      }
+      button[type="submit"] {
+        padding: 5px 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+      button[type="submit"]:hover {
+        background-color: #0062cc;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        margin-bottom: 5px;
+      }
+    </style>
+    <script>
+      function searchHospitals(event) {
+        event.preventDefault(); // prevent form from submitting
+        const cityName = document.getElementById("city-name").value;
+        const url = `https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-hospitals-directory&q=${cityName}`;
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            const hospitals = data.records.map(record => record.fields.name);
+            const hospitalList = document.getElementById("hospital-list");
+            hospitalList.innerHTML = ""; // clear previous results
+            hospitals.forEach(hospital => {
+              const li = document.createElement("li");
+              li.textContent = hospital;
+              hospitalList.appendChild(li);
+            });
+          })
+          .catch(error => console.error(error));
+      }
+    </script>
+  </head>
+  <body>
+    <form onsubmit="searchHospitals(event)">
+      <label for="city-name">Enter city name:</label>
+      <input type="text" id="city-name" name="city">
+      <button type="submit">Search</button>
+    </form>
+    <ul id="hospital-list"></ul>
+  </body>
+</html>
